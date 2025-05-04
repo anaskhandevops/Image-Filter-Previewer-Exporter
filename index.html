@@ -3,29 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Filter Previewer</title>
+    <title>Image Filter Funhouse!</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         /* Custom styles */
         body {
             font-family: 'Inter', sans-serif;
+            /* Apply the requested background color */
+            background-color: #FFFCEB;
         }
-        /* Style the file input button */
+
+        /* Main container styling - Adopted from color_extractor_v2 */
+        .main-container {
+            background-color: #ffffff;
+            border: 3px solid #2D3748; /* Dark border */
+            border-radius: 16px; /* More pronounced rounding */
+            box-shadow: 8px 8px 0px #2D3748; /* Stronger offset shadow */
+            width: 100%;
+            max-width: 64rem; /* max-w-6xl equivalent */
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Playful File Input Button - Adopted */
         .file-input-button {
              display: inline-block;
-             padding: 0.5rem 1rem;
+             padding: 0.75rem 1.5rem; /* Larger padding */
              cursor: pointer;
-             border-radius: 0.375rem; /* rounded-md */
-             background-color: #ffffff; /* bg-white */
-             color: #4f46e5; /* text-indigo-600 */
-             border: 1px solid #d1d5db; /* border-gray-300 */
-             font-weight: 500; /* font-medium */
-             transition: background-color 0.15s ease-in-out;
+             border-radius: 12px; /* More rounded */
+             background-color: #ffffff;
+             color: #DD6B20; /* Tailwind orange-600 */
+             border: 3px solid #4A5568; /* Dark border */
+             font-weight: 600; /* Bolder */
+             transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, background-color 0.15s ease-in-out;
+             box-shadow: 4px 4px 0px #4A5568; /* Offset shadow */
         }
         .file-input-button:hover {
-             background-color: #f9fafb; /* hover:bg-gray-50 */
+            background-color: #FEF3C7; /* Tailwind amber-100 */
+            transform: translateY(-2px); /* Lift effect */
+            box-shadow: 5px 5px 0px #4A5568;
         }
-        /* Hide the default file input */
+        /* Hide the default file input visually but keep it accessible */
         #imageInput {
             width: 0.1px;
             height: 0.1px;
@@ -34,177 +55,334 @@
             position: absolute;
             z-index: -1;
         }
+
+        /* Playful Action Button Style (Download) - Adopted */
+        .action-button {
+            background-color: #FF7F50; /* Coral */
+            color: white;
+            font-weight: 700; /* bold */
+            padding-top: 0.75rem; /* py-3 */
+            padding-bottom: 0.75rem;
+            padding-left: 1rem; /* px-4 */
+            padding-right: 1rem;
+            border-radius: 0.75rem; /* rounded-xl */
+            border: 2px solid #2D3748; /* border-gray-800 */
+            box-shadow: 4px 4px 0px #2D3748; /* shadow-[4px_4px_0px_rgba(45,55,72)] */
+            transition: all 0.15s ease-out;
+        }
+        .action-button:hover {
+            background-color: #FF6347; /* Tomato */
+            box-shadow: 5px 5px 0px #2D3748;
+            transform: translateY(-1px);
+        }
+         .action-button:active {
+            background-color: #CD5C5C; /* IndianRed */
+            box-shadow: 2px 2px 0px #2D3748;
+            transform: translateY(1px) translateX(1px);
+        }
+        .action-button:focus {
+            outline: none;
+            box-shadow: 4px 4px 0px #2D3748, 0 0 0 3px #FFFCEB, 0 0 0 5px #FF7F50; /* Ring effect */
+        }
+        .action-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            box-shadow: 4px 4px 0px #9CA3AF; /* Lighter shadow when disabled */
+            border-color: #9CA3AF;
+            background-color: #FFAC8A; /* Lighter orange */
+        }
+
+        /* Playful Reset Button Style - Adopted */
+        .reset-button {
+            background-color: #A0AEC0; /* gray-500 */
+            color: white;
+            font-weight: 600; /* medium */
+            padding-top: 0.5rem; /* py-2 */
+            padding-bottom: 0.5rem;
+            padding-left: 1rem; /* px-4 */
+            padding-right: 1rem;
+            border-radius: 10px; /* Slightly less rounded than action */
+            border: 2px solid #4A5568;
+            box-shadow: 3px 3px 0px #4A5568;
+            transition: all 0.15s ease-out;
+        }
+        .reset-button:hover {
+            background-color: #718096; /* gray-600 */
+            box-shadow: 4px 4px 0px #4A5568;
+            transform: translateY(-1px);
+        }
+        .reset-button:active {
+            background-color: #4A5568; /* gray-700 */
+            box-shadow: 1px 1px 0px #4A5568;
+            transform: translateY(1px) translateX(1px);
+        }
+        .reset-button:focus {
+             outline: none;
+             box-shadow: 3px 3px 0px #4A5568, 0 0 0 3px #FFFCEB, 0 0 0 5px #A0AEC0; /* Ring effect */
+        }
+
         /* Style range sliders */
         input[type="range"] {
             cursor: pointer;
-            accent-color: #4f46e5; /* Indigo */
+            accent-color: #FF7F50; /* Vibrant Orange */
+            height: 8px; /* Slightly thicker */
+            border-radius: 4px;
+            background-color: #FED7AA; /* Tailwind orange-200 */
+            transition: background-color 0.15s ease-in-out;
         }
+        input[type="range"]::-webkit-slider-thumb {
+             appearance: none;
+             width: 20px;
+             height: 20px;
+             background: #FF7F50;
+             border-radius: 50%;
+             border: 2px solid #FFFCEB;
+             box-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+         input[type="range"]::-moz-range-thumb {
+             width: 18px;
+             height: 18px;
+             background: #FF7F50;
+             border-radius: 50%;
+             border: 2px solid #FFFCEB;
+             box-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+             cursor: pointer;
+         }
+        input[type="range"]:hover {
+             background-color: #FDBA74; /* Tailwind orange-300 */
+        }
+
         /* Style checkboxes */
         input[type="checkbox"] {
              cursor: pointer;
-             accent-color: #4f46e5; /* Indigo */
-             width: 1rem;
-             height: 1rem;
+             accent-color: #FF7F50; /* Vibrant Orange */
+             width: 1.1rem; /* Slightly larger */
+             height: 1.1rem;
+             border-radius: 4px;
+             border: 2px solid #4A5568; /* Add border */
         }
+        input[type="checkbox"]:checked {
+             background-color: #FF7F50;
+        }
+        input[type="checkbox"]:focus {
+             outline: 2px solid #FFFCEB;
+             outline-offset: 1px;
+             box-shadow: 0 0 0 3px #FFDAB9; /* PeachPuff ring */
+        }
+
         /* Image preview styling */
         #imagePreview {
             max-width: 100%;
             height: auto;
             display: block;
             margin: 0 auto;
-            /* Add transition for smoother filter changes */
-            transition: filter 0.1s ease-in-out;
+            transition: filter 0.15s ease-in-out; /* Smoother filter changes */
+            border-radius: 8px; /* Rounded corners */
+            border: 2px solid #CBD5E0; /* Tailwind gray-300 */
         }
-        /* Message box styling */
+        .image-preview-container {
+            border: 2px solid #FDBA74; /* Tailwind orange-300 */
+            background-color: #FFF7ED; /* Tailwind orange-50 */
+            border-radius: 12px; /* Match button rounding */
+        }
+
+        /* Message box styling - Adopted */
         #message-box {
             position: fixed;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            padding: 10px 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 12px 24px; /* Increased padding */
+            border-radius: 12px; /* More rounded */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15), 3px 3px 0px #4A5568; /* Added offset shadow */
             z-index: 1000;
             opacity: 0;
-            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            transition: opacity 0.5s ease-in-out, transform 0.3s ease-out; /* Added transform transition */
             pointer-events: none;
-            transform: translate(-50%, 20px); /* Start slightly lower */
+            font-weight: 600; /* Bolder */
+            border: 3px solid; /* Thicker border */
         }
         #message-box.show {
             opacity: 1;
+            transform: translateX(-50%) translateY(-10px); /* Pop up effect */
             pointer-events: auto;
-            transform: translateX(-50%); /* Move to final position */
         }
         #message-box.success {
-            background-color: #dcfce7; /* Tailwind green-100 */
-            color: #166534; /* Tailwind green-800 */
-            border: 1px solid #86efac; /* Tailwind green-300 */
+            background-color: #D1FAE5; /* Tailwind green-100 */
+            color: #047857; /* Tailwind green-700 */
+            border-color: #6EE7B7; /* Tailwind green-300 */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15), 3px 3px 0px #065F46; /* Green shadow */
         }
         #message-box.error {
-             background-color: #fee2e2; /* Tailwind red-100 */
-             color: #991b1b; /* Tailwind red-800 */
-             border: 1px solid #fca5a5; /* Tailwind red-300 */
+           background-color: #FFE4E6; /* Light pink */
+           color: #DC2626; /* Tailwind red-600 */
+           border-color: #FDA4AF; /* Tailwind rose-300 */
+           box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15), 3px 3px 0px #991B1B; /* Red shadow */
         }
+
         /* CSS code display styling */
         #cssCode {
             font-family: monospace;
-            background-color: #f3f4f6; /* gray-100 */
-            border: 1px solid #d1d5db; /* gray-300 */
-            border-radius: 0.375rem; /* rounded-md */
-            padding: 0.75rem 1rem; /* Increased padding */
+            background-color: #FEF3C7; /* Tailwind amber-100 */
+            border: 2px solid #FDBA74; /* Tailwind orange-300 */
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
             word-wrap: break-word;
             white-space: pre-wrap;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: background-color 0.2s, box-shadow 0.2s;
+            color: #9A3412; /* Tailwind amber-800 */
+            box-shadow: inset 2px 2px 4px rgba(0,0,0,0.05);
         }
         #cssCode:hover {
-             background-color: #e5e7eb; /* gray-200 */
+             background-color: #FDE68A; /* Tailwind amber-200 */
+             box-shadow: inset 2px 2px 6px rgba(0,0,0,0.1);
         }
+
+        /* Control Section Styling */
+        .controls-container {
+            background-color: #FFF7ED; /* Tailwind orange-50 */
+            border: 2px solid #FDBA74; /* Tailwind orange-300 */
+            border-radius: 12px;
+            box-shadow: 4px 4px 0px #FDBA74; /* Offset shadow using border color */
+        }
+        .controls-container h2, .css-code-container h2 {
+            color: #C2410C; /* Tailwind orange-700 */
+            border-bottom: 2px solid #FDBA74; /* Tailwind orange-300 */
+            font-weight: 700; /* bold */
+        }
+        .controls-container label, .css-code-container p {
+             color: #9A3412; /* Tailwind amber-800 */
+             font-weight: 500; /* medium */
+        }
+        .controls-container span { /* Value displays */
+            color: #EA580C; /* Tailwind orange-600 */
+            background-color: #FFF7ED;
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid #FDBA74;
+        }
+
+        /* CSS Code Section Styling */
+        .css-code-container {
+             background-color: #FEF3C7; /* Tailwind amber-100 */
+             border: 2px solid #FDE68A; /* Tailwind amber-200 */
+             border-radius: 12px;
+             box-shadow: 4px 4px 0px #FDE68A; /* Offset shadow using border color */
+             display: flex; /* Added for flex layout */
+             flex-direction: column; /* Stack items vertically */
+        }
+
         /* Ensure hidden canvas stays hidden */
         #downloadCanvas {
             display: none;
         }
 
     </style>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="bg-gray-100 p-4 md:p-8">
+<body class="p-4 md:p-8">
 
-    <div class="bg-white p-6 sm:p-8 rounded-lg shadow-xl w-full max-w-5xl mx-auto">
+    <div class="main-container p-6 sm:p-8">
 
-        <h1 class="text-2xl sm:text-3xl font-semibold text-center text-gray-800 mb-8">
-            🖼️ Image Filter Previewer & Exporter
+        <h1 class="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-10 tracking-tight">
+            🎨 Image Filter Funhouse! 🎨
         </h1>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-            <div class="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-indigo-400 transition duration-200">
-                 <svg class="w-12 h-12 text-gray-400 mb-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <div class="flex flex-col items-center justify-center border-3 border-dashed border-orange-300 rounded-lg p-6 hover:border-orange-400 transition duration-200 bg-orange-50 min-h-[200px]">
+                 <svg class="w-12 h-12 text-orange-400 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
                  </svg>
-                <label for="imageInput" class="file-input-button mb-2">
-                    Choose Image File
-                </label>
-                <input type="file" id="imageInput" accept="image/*">
-                <p id="fileName" class="text-sm text-gray-500 text-center mt-1">No file chosen</p>
+                 <label for="imageInput" class="file-input-button mb-3">
+                     Choose Groovy Image!
+                 </label>
+                 <input type="file" id="imageInput" accept="image/*">
+                 <p id="fileName" class="text-sm text-orange-700 text-center mt-1 font-medium">No masterpiece selected</p>
             </div>
 
-            <div class="border border-gray-200 rounded-lg p-2 bg-gray-50 flex items-center justify-center min-h-[250px] overflow-hidden">
-                <img id="imagePreview" src="https://placehold.co/400x300/e2e8f0/94a3b8?text=Upload+Image" alt="Image Preview" class="rounded shadow-sm"/>
+            <div class="image-preview-container p-3 flex items-center justify-center min-h-[250px] overflow-hidden">
+                <img id="imagePreview" src="https://placehold.co/400x300/FFF7ED/FDBA74?text=Your+Image+Here!" alt="Image Preview" class="shadow-md"/>
+                 <script>
+                    const imgPreview = document.getElementById('imagePreview');
+                    imgPreview.onerror = function() {
+                        this.onerror=null; // prevent infinite loop
+                        this.src='https://placehold.co/400x300/e0e0e0/a0a0a0?text=Image+Load+Error';
+                        console.warn("Placeholder image failed to load, using fallback.");
+                    };
+                 </script>
             </div>
         </div>
 
         <div id="controlsSection" class="grid grid-cols-1 md:grid-cols-2 gap-8 hidden">
-             <div class="space-y-4 border border-gray-200 rounded-lg p-5 bg-white shadow-sm">
-                <h2 class="text-lg font-medium text-gray-700 mb-4 text-center border-b pb-2">Filter Controls</h2>
+             <div class="controls-container space-y-5 p-5">
+                <h2 class="text-xl font-medium text-center mb-4 pb-2">Tune the Fun!</h2>
 
                 <div class="flex items-center space-x-3">
-                    <label for="brightness" class="w-24 text-sm font-medium text-gray-600 shrink-0">Brightness:</label>
-                    <input type="range" id="brightness" min="0" max="200" value="100" class="flex-grow h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
-                    <span id="brightnessValue" class="text-sm text-gray-500 w-12 text-right font-mono">100%</span>
-                </div>
-
-                <div class="flex items-center space-x-3">
-                    <label for="contrast" class="w-24 text-sm font-medium text-gray-600 shrink-0">Contrast:</label>
-                    <input type="range" id="contrast" min="0" max="200" value="100" class="flex-grow h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
-                    <span id="contrastValue" class="text-sm text-gray-500 w-12 text-right font-mono">100%</span>
-                </div>
-
-                 <div class="flex items-center space-x-3">
-                    <label for="saturate" class="w-24 text-sm font-medium text-gray-600 shrink-0">Saturate:</label>
-                    <input type="range" id="saturate" min="0" max="200" value="100" class="flex-grow h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
-                    <span id="saturateValue" class="text-sm text-gray-500 w-12 text-right font-mono">100%</span>
-                </div>
-
-                 <div class="flex items-center space-x-3">
-                    <label for="hue-rotate" class="w-24 text-sm font-medium text-gray-600 shrink-0">Hue Rotate:</label>
-                    <input type="range" id="hue-rotate" min="0" max="360" value="0" step="1" class="flex-grow h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
-                    <span id="hueRotateValue" class="text-sm text-gray-500 w-12 text-right font-mono">0deg</span>
+                    <label for="brightness" class="w-24 shrink-0 text-sm">Brightness:</label>
+                    <input type="range" id="brightness" min="0" max="200" value="100" class="flex-grow">
+                    <span id="brightnessValue" class="w-14 text-right font-mono text-xs">100%</span>
                 </div>
 
                 <div class="flex items-center space-x-3">
-                    <label for="blur" class="w-24 text-sm font-medium text-gray-600 shrink-0">Blur:</label>
-                    <input type="range" id="blur" min="0" max="10" value="0" step="0.1" class="flex-grow h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
-                    <span id="blurValue" class="text-sm text-gray-500 w-12 text-right font-mono">0px</span>
+                    <label for="contrast" class="w-24 shrink-0 text-sm">Contrast:</label>
+                    <input type="range" id="contrast" min="0" max="200" value="100" class="flex-grow">
+                    <span id="contrastValue" class="w-14 text-right font-mono text-xs">100%</span>
                 </div>
 
-                <div class="grid grid-cols-3 gap-4 pt-2">
-                    <div class="flex items-center space-x-2">
-                        <input type="checkbox" id="grayscale" class="rounded">
-                        <label for="grayscale" class="text-sm font-medium text-gray-600">Grayscale</label>
+                <div class="flex items-center space-x-3">
+                    <label for="saturate" class="w-24 shrink-0 text-sm">Saturate:</label>
+                    <input type="range" id="saturate" min="0" max="200" value="100" class="flex-grow">
+                    <span id="saturateValue" class="w-14 text-right font-mono text-xs">100%</span>
+                </div>
+
+                <div class="flex items-center space-x-3">
+                    <label for="hue-rotate" class="w-24 shrink-0 text-sm">Hue Rotate:</label>
+                    <input type="range" id="hue-rotate" min="0" max="360" value="0" step="1" class="flex-grow">
+                    <span id="hueRotateValue" class="w-14 text-right font-mono text-xs">0deg</span>
+                </div>
+
+                <div class="flex items-center space-x-3">
+                    <label for="blur" class="w-24 shrink-0 text-sm">Blur:</label>
+                    <input type="range" id="blur" min="0" max="10" value="0" step="0.1" class="flex-grow">
+                    <span id="blurValue" class="w-14 text-right font-mono text-xs">0px</span>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4 pt-3">
+                    <div class="flex items-center space-x-2 justify-center">
+                        <input type="checkbox" id="grayscale">
+                        <label for="grayscale" class="text-sm">Grayscale</label>
                     </div>
-                     <div class="flex items-center space-x-2">
-                        <input type="checkbox" id="sepia" class="rounded">
-                         <label for="sepia" class="text-sm font-medium text-gray-600">Sepia</label>
+                     <div class="flex items-center space-x-2 justify-center">
+                        <input type="checkbox" id="sepia">
+                         <label for="sepia" class="text-sm">Sepia</label>
                     </div>
-                     <div class="flex items-center space-x-2">
-                        <input type="checkbox" id="invert" class="rounded">
-                         <label for="invert" class="text-sm font-medium text-gray-600">Invert</label>
+                     <div class="flex items-center space-x-2 justify-center">
+                        <input type="checkbox" id="invert">
+                         <label for="invert" class="text-sm">Invert</label>
                     </div>
                 </div>
 
-                <button id="resetBtn" class="w-full mt-5 bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-md text-sm transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 flex items-center justify-center space-x-2">
-                     <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <button id="resetBtn" class="reset-button w-full mt-5 text-sm flex items-center justify-center space-x-2">
+                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-                     </svg>
-                    <span>Reset Filters</span>
+                    </svg>
+                    <span>Start Over!</span>
                 </button>
-            </div>
+             </div>
 
-             <div class="space-y-5 border border-gray-200 rounded-lg p-5 bg-white shadow-sm flex flex-col">
+             <div class="css-code-container space-y-5 p-5">
                  <div class="flex-grow">
-                     <h2 class="text-lg font-medium text-gray-700 mb-2 text-center border-b pb-2">Generated CSS</h2>
-                     <p class="text-sm text-gray-500 mb-3">Click the code block below to copy.</p>
-                     <div id="cssCode" title="Click to copy CSS">
-                         filter: none;
-                     </div>
+                    <h2 class="text-xl font-medium text-center mb-2 pb-2">Magic CSS Code</h2>
+                    <p class="text-sm mb-3 text-center">Click the code block below to copy!</p>
+                    <div id="cssCode" title="Click to copy CSS">
+                        filter: none;
+                    </div>
                  </div>
-                 <button id="downloadBtn" class="w-full mt-auto bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 px-4 rounded-md text-sm transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center space-x-2">
-                      <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                      </svg>
-                     <span>Download Filtered Image</span>
+                 <button id="downloadBtn" class="action-button w-full mt-auto text-sm flex items-center justify-center space-x-2">
+                     <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                       <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                     </svg>
+                     <span>Download Masterpiece!</span>
                  </button>
             </div>
         </div>
@@ -221,221 +399,245 @@
         const imagePreview = document.getElementById('imagePreview');
         const controlsSection = document.getElementById('controlsSection');
         const messageBox = document.getElementById('message-box');
-        const downloadCanvas = document.getElementById('downloadCanvas'); // Canvas for downloading
+        const downloadCanvas = document.getElementById('downloadCanvas');
         const downloadCtx = downloadCanvas.getContext('2d');
 
         // Filter Controls
         const brightnessSlider = document.getElementById('brightness');
         const contrastSlider = document.getElementById('contrast');
-        const saturateSlider = document.getElementById('saturate'); // New
-        const hueRotateSlider = document.getElementById('hue-rotate'); // New
+        const saturateSlider = document.getElementById('saturate');
+        const hueRotateSlider = document.getElementById('hue-rotate');
         const blurSlider = document.getElementById('blur');
         const grayscaleCheckbox = document.getElementById('grayscale');
         const sepiaCheckbox = document.getElementById('sepia');
-        const invertCheckbox = document.getElementById('invert'); // New
+        const invertCheckbox = document.getElementById('invert');
         const resetBtn = document.getElementById('resetBtn');
-        const downloadBtn = document.getElementById('downloadBtn'); // New
+        const downloadBtn = document.getElementById('downloadBtn');
 
         // Value Displays
         const brightnessValue = document.getElementById('brightnessValue');
         const contrastValue = document.getElementById('contrastValue');
-        const saturateValue = document.getElementById('saturateValue'); // New
-        const hueRotateValue = document.getElementById('hueRotateValue'); // New
+        const saturateValue = document.getElementById('saturateValue');
+        const hueRotateValue = document.getElementById('hueRotateValue');
         const blurValue = document.getElementById('blurValue');
 
         // CSS Code Display
         const cssCodeDisplay = document.getElementById('cssCode');
 
-        let messageTimeout; // For message box
-        let currentImage = null; // Store the loaded image object for downloading
-        let originalImageSrc = 'https://placehold.co/400x300/e2e8f0/94a3b8?text=Upload+Image'; // Store original placeholder
+        let messageTimeout; // For message box timing
+        let currentImage = null; // Store the loaded image object
+        let currentFilename = 'filtered-image'; // Store the filename
+        const originalImageSrc = imagePreview.src; // Store initial placeholder src
 
         // --- Utility Functions ---
 
+        // Function to show messages with animation
         function showMessage(text, type = 'success') {
-            if (messageTimeout) clearTimeout(messageTimeout);
+            if (messageTimeout) clearTimeout(messageTimeout); // Clear existing timeout
             messageBox.textContent = text;
-            messageBox.className = `show ${type}`; // Add 'show' and type class
+            // Apply type class first, then trigger show animation
+            messageBox.className = ` ${type}`; // Reset classes except type
+            // Use a tiny timeout to allow the browser to apply the type class before adding 'show'
+            setTimeout(() => {
+                messageBox.classList.add('show');
+            }, 10);
+
+            // Set timeout to hide the message
             messageTimeout = setTimeout(() => {
-                messageBox.className = messageBox.className.replace('show', '');
+                messageBox.classList.remove('show');
                 messageTimeout = null;
-            }, 3000);
+            }, 3500); // Keep message visible slightly longer
         }
 
+        // Function to apply CSS filters based on control values
         function applyFilters() {
             const brightness = brightnessSlider.value;
             const contrast = contrastSlider.value;
-            const saturate = saturateSlider.value; // New
-            const hueRotate = hueRotateSlider.value; // New
+            const saturate = saturateSlider.value;
+            const hueRotate = hueRotateSlider.value;
             const blur = blurSlider.value;
             const grayscale = grayscaleCheckbox.checked;
             const sepia = sepiaCheckbox.checked;
-            const invert = invertCheckbox.checked; // New
+            const invert = invertCheckbox.checked;
 
-            // Update value displays
+            // Update value displays next to sliders
             brightnessValue.textContent = `${brightness}%`;
             contrastValue.textContent = `${contrast}%`;
-            saturateValue.textContent = `${saturate}%`; // New
-            hueRotateValue.textContent = `${hueRotate}deg`; // New
+            saturateValue.textContent = `${saturate}%`;
+            hueRotateValue.textContent = `${hueRotate}deg`;
             blurValue.textContent = `${blur}px`;
 
             // Construct the CSS filter string
             let filterString = '';
-            filterString += `brightness(${brightness}%) `;
-            filterString += `contrast(${contrast}%) `;
-            filterString += `saturate(${saturate}%) `; // New
-            filterString += `hue-rotate(${hueRotate}deg) `; // New
-            filterString += `blur(${blur}px) `;
+            // Add filters only if they differ from default values
+            if (brightness !== '100') filterString += `brightness(${brightness}%) `;
+            if (contrast !== '100') filterString += `contrast(${contrast}%) `;
+            if (saturate !== '100') filterString += `saturate(${saturate}%) `;
+            if (hueRotate !== '0') filterString += `hue-rotate(${hueRotate}deg) `;
+            if (blur !== '0') filterString += `blur(${blur}px) `;
             if (grayscale) filterString += `grayscale(100%) `;
             if (sepia) filterString += `sepia(100%) `;
-            if (invert) filterString += `invert(100%) `; // New
+            if (invert) filterString += `invert(100%) `;
 
-            filterString = filterString.trim();
+            filterString = filterString.trim(); // Remove trailing space
 
-            // Apply filter to the image preview
+            // Apply filter to the image preview element
             imagePreview.style.filter = filterString || 'none';
 
-            // Update the CSS code display
+            // Update the CSS code display block
             cssCodeDisplay.textContent = `filter: ${filterString || 'none'};`;
         }
 
+        // Function to reset all filter controls to their default values
         function resetFilters() {
             brightnessSlider.value = 100;
             contrastSlider.value = 100;
-            saturateSlider.value = 100; // New
-            hueRotateSlider.value = 0; // New
+            saturateSlider.value = 100;
+            hueRotateSlider.value = 0;
             blurSlider.value = 0;
             grayscaleCheckbox.checked = false;
             sepiaCheckbox.checked = false;
-            invertCheckbox.checked = false; // New
-            applyFilters(); // Re-apply default filters
+            invertCheckbox.checked = false;
+            applyFilters(); // Re-apply default filters and update UI
         }
 
         // --- Event Listeners ---
 
+        // Listener for file input changes
         imageInput.addEventListener('change', (event) => {
             const file = event.target.files[0];
-            currentImage = null; // Reset current image
+            currentImage = null; // Reset image object on new selection
+            downloadBtn.disabled = true; // Disable download until image is loaded
+
             if (file) {
+                // Validate file type
                 if (!file.type.startsWith('image/')) {
-                    showMessage('Please select an image file.', 'error');
-                    imageInput.value = '';
-                    fileNameDisplay.textContent = 'No file chosen';
+                    showMessage('Whoops! Please select an image file.', 'error');
+                    imageInput.value = ''; // Clear the input
+                    fileNameDisplay.textContent = 'No masterpiece selected';
+                    controlsSection.classList.add('hidden'); // Hide controls
+                    imagePreview.src = originalImageSrc; // Reset preview
+                    resetFilters(); // Reset filter values
                     return;
                 }
 
+                // Update file name display
+                currentFilename = file.name.split('.').slice(0, -1).join('.') || 'filtered-image';
                 fileNameDisplay.textContent = file.name;
 
+                // Use FileReader to read the file as Data URL
                 const reader = new FileReader();
                 reader.onload = function(e) {
+                    // Set the preview source
                     imagePreview.src = e.target.result;
-                    // Create an Image object to store for downloading
+
+                    // Create an Image object to get natural dimensions and for drawing to canvas
                     currentImage = new Image();
                     currentImage.onload = () => {
-                         console.log("Image loaded for processing.");
-                         // You could enable download button here if needed immediately
+                        console.log("Image loaded successfully for processing.");
+                        downloadBtn.disabled = false; // Enable download button now
+                        controlsSection.classList.remove('hidden'); // Show controls
+                        resetFilters(); // Reset filters for the new image
                     };
                     currentImage.onerror = () => {
                         console.error("Failed to load image object for processing.");
                         currentImage = null;
-                        showMessage('Error loading image data for download.', 'error');
+                        showMessage('Error loading image data. Cannot download.', 'error');
+                        controlsSection.classList.add('hidden'); // Hide controls if load fails
+                        downloadBtn.disabled = true;
                     };
-                    currentImage.src = e.target.result; // Set src for the Image object
-
-                    controlsSection.classList.remove('hidden');
-                    resetFilters();
+                    currentImage.src = e.target.result; // Load the image object
                 }
                 reader.onerror = function() {
                     showMessage('Error reading file.', 'error');
                     controlsSection.classList.add('hidden');
+                    downloadBtn.disabled = true;
                     currentImage = null;
                 }
-                reader.readAsDataURL(file);
+                reader.readAsDataURL(file); // Start reading
 
             } else {
-                fileNameDisplay.textContent = 'No file chosen';
-                imagePreview.src = originalImageSrc;
-                controlsSection.classList.add('hidden');
+                // Handle case where user cancels file selection
+                fileNameDisplay.textContent = 'No masterpiece selected';
+                imagePreview.src = originalImageSrc; // Reset preview
+                controlsSection.classList.add('hidden'); // Hide controls
                 resetFilters();
+                downloadBtn.disabled = true;
             }
         });
 
-        // Filter Control Changes
-        brightnessSlider.addEventListener('input', applyFilters);
-        contrastSlider.addEventListener('input', applyFilters);
-        saturateSlider.addEventListener('input', applyFilters); // New
-        hueRotateSlider.addEventListener('input', applyFilters); // New
-        blurSlider.addEventListener('input', applyFilters);
-        grayscaleCheckbox.addEventListener('change', applyFilters);
-        sepiaCheckbox.addEventListener('change', applyFilters);
-        invertCheckbox.addEventListener('change', applyFilters); // New
+        // Add listeners to all filter controls to trigger applyFilters
+        [brightnessSlider, contrastSlider, saturateSlider, hueRotateSlider, blurSlider].forEach(slider => {
+            slider.addEventListener('input', applyFilters);
+        });
+        [grayscaleCheckbox, sepiaCheckbox, invertCheckbox].forEach(checkbox => {
+            checkbox.addEventListener('change', applyFilters);
+        });
 
-        // Reset Button Click
+        // Reset Button Click Listener
         resetBtn.addEventListener('click', resetFilters);
 
-        // Copy CSS Code Click
+        // Copy CSS Code Click Listener
         cssCodeDisplay.addEventListener('click', () => {
             const codeToCopy = cssCodeDisplay.textContent;
              if (!codeToCopy || codeToCopy === 'filter: none;') {
-                 showMessage('No filters to copy.', 'error'); // Or maybe just don't show a message
+                 showMessage('No filters applied yet to copy!', 'error');
                  return;
              }
             navigator.clipboard.writeText(codeToCopy)
-                .then(() => showMessage('CSS copied to clipboard!', 'success'))
+                .then(() => showMessage('CSS copied to clipboard! ✨', 'success'))
                 .catch(err => {
                     console.error('Failed to copy CSS: ', err);
-                    showMessage('Failed to copy CSS. Check browser permissions?', 'error');
+                    showMessage('Could not copy CSS. Try again?', 'error');
                 });
         });
 
-        // Download Button Click
+        // Download Button Click Listener
         downloadBtn.addEventListener('click', () => {
+            // Check if the image object is loaded and valid
             if (!currentImage || !currentImage.complete || currentImage.naturalWidth === 0) {
-                showMessage('Please upload an image first, or wait for it to load.', 'error');
+                showMessage('Image not ready. Upload or wait for load.', 'error');
                 return;
             }
 
             try {
-                // Set canvas dimensions to the image's natural dimensions
+                // Set canvas dimensions to the original image size
                 downloadCanvas.width = currentImage.naturalWidth;
                 downloadCanvas.height = currentImage.naturalHeight;
 
-                // Get the current filter style string
+                // Get the current filter style string from the preview image
                 const filterStyle = imagePreview.style.filter || 'none';
 
-                // Apply the filter to the canvas context *before* drawing
+                // Apply the filter to the hidden canvas context
                 downloadCtx.filter = filterStyle;
 
-                // Draw the image onto the canvas (the filter is applied during this draw)
-                // Clear previous drawings (important if redrawing)
+                // Clear the canvas and draw the original image (filter is applied during draw)
                 downloadCtx.clearRect(0, 0, downloadCanvas.width, downloadCanvas.height);
                 downloadCtx.drawImage(currentImage, 0, 0);
 
-                // Reset canvas filter immediately after drawing (good practice)
+                // Reset canvas filter immediately after drawing (important)
                 downloadCtx.filter = 'none';
 
-                // Create a temporary link element
+                // Create a temporary link element for download
                 const link = document.createElement('a');
+                link.download = `${currentFilename}-filtered.png`; // Set filename
+                link.href = downloadCanvas.toDataURL('image/png'); // Get canvas data as PNG
 
-                // Set filename (you can customize this)
-                const originalFilename = fileNameDisplay.textContent.split('.').slice(0, -1).join('.') || 'filtered-image';
-                link.download = `${originalFilename}-filtered.png`;
-
-                // Get the canvas content as a PNG data URL
-                link.href = downloadCanvas.toDataURL('image/png');
-
-                // Programmatically click the link to trigger the download
+                // Trigger the download
                 link.click();
 
-                showMessage('Image download started!', 'success');
+                showMessage('Download starting! 🎉', 'success');
 
             } catch (error) {
                 console.error("Error generating download:", error);
                 showMessage('Could not generate image for download.', 'error');
-                 // Reset canvas filter in case of error
+                // Ensure canvas filter is reset in case of error
                 downloadCtx.filter = 'none';
             }
         });
+
+        // Initial setup: Disable download button
+        downloadBtn.disabled = true;
 
     </script>
 
